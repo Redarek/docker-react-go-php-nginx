@@ -2,6 +2,7 @@
 ## Preparation
 1. Create directory `php-scripts` and move the php files there
 2. Clone your backend and frontend files into `backend` and `frontend` directories
+3. In `nginx/default.conf` replace `example.com` by your domain name
 ## Build and run with HTTPS
 1. Disable/comment main server block in `default.conf`
 2. Use `docker-compose up -d --build`
