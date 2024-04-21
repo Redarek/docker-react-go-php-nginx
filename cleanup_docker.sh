@@ -1,20 +1,59 @@
 #!/bin/bash
 
-# Удаление всех контейнеров
-docker container stop $(docker container ls -aq)  # Остановка всех контейнеров
-docker container rm $(docker container ls -aq)  # Удаление всех контейнеров
+echo "Listing containers..."
+containers=$(docker ps -qa)
+echo "containers: $containers"
 
-# Удаление всех образов Docker
-docker image rm $(docker image ls -aq) --force  # Удаление всех образов
+if [ ! -z "$containers" ]
+then
+    echo "Stopping containers..."
+    docker stop $containers
+    echo "Removing containers..."
+    docker rm $containers
+else
+    echo "No containers found"
+fi
 
-# Удаление всех Docker volumes (если нужно)
-docker volume rm $(docker volume ls -q)  # Удаление всех томов
+echo "Listing images..."
+images=$(docker images -qa)
+echo "images: $images"
 
-# Удаление всех сетей Docker (не встроенных)
-docker network rm $(docker network ls | grep "bridge\|none\|host" -v | awk '/ / { print $1 }')  # Удаление пользовательских сетей
+if [ ! -z "$images" ]
+then
+    echo "Removing images..."
+    docker rmi -f $images
+else
+    echo "No images found"
+fi
 
-# Очистка неиспользуемых или висячих образов, контейнеров, томов и сетей
-docker system prune -a --volumes --force  # Удаляет все неиспользуемые объекты
+echo "Listing volumes..."
+volumes=$(docker volume ls -q)
+echo "volumes: $volumes"
 
-# Дополнительно: Очистка кэша сборки Docker
-docker builder prune --all --force  # Удаление кэша сборки
+if [ ! -z "$volumes" ]
+then
+    echo "Removing volumes..."
+    docker volume rm $volumes
+else
+    echo "No volumes found"
+fi
+
+echo "Listing networks..."
+networks=$(docker network ls -q)
+echo "networks: $networks"
+
+if [ ! -z "$networks" ]
+then
+    echo "Removing networks..."
+    docker network rm $networks
+else
+    echo "No networks found"
+fi
+
+echo "These should not output any items:"
+docker ps -a
+docker images -a 
+docker volume ls
+
+echo "This should only show the default networks:"
+docker network ls
