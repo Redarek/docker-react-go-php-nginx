@@ -59,9 +59,6 @@ services:
       - ./certbot/conf/:/etc/letsencrypt/:rw
     networks:
       - webnet
-      
-    networks:
-      - webnet
 
 networks:
   webnet:
